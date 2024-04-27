@@ -1,0 +1,376 @@
+\documentclass[11pt]{article}
+
+\usepackage{geometry} \geometry{verbose,letterpaper,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{kotex}
+\usepackage{graphicx}
+\usepackage{amssymb,bm}
+%\usepackage{esint}
+%\usepackage{graphicx,subfig}
+\usepackage[mathscr]{euscript}
+\newtheorem{theorem}{Theorem}
+
+\makeatletter
+\include{HShinInclude}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%\floatstyle{ruled}
+%\newfloat{algorithm}{tbp}{loa} \floatname{algorithm}{Algorithm}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+\usepackage{cite}
+%,algorithmic}
+
+%%\usepackage[usenames]{color}
+\usepackage{setspace}
+%\usepackage[labelfont=bf,textfont=it,normalsize]{caption}
+\usepackage[labelfont=bf,small]{caption}
+
+\usepackage{subfigure}
+\usepackage{psfrag}
+\usepackage{rotating}
+
+\usepackage{multirow}
+\usepackage{stfloats}
+\usepackage{tabularx}
+%\include{HShinIncludeV1_11}
+\usepackage{pifont,xcolor}
+
+\newcommand{\colouritem}[1]{%
+	{\color{#1}\item\leavevmode}\ignorespaces%
+}
+%%%%%% Fox H-Variable %%%%%%%%%%%%%%%%%
+
+\newcommand{\pSet}{\mathcal{P}}
+\newcommand{\FoxD}[1]{\mathscr{H}\left(#1\right)}
+\newcommand{\FoxV}[5]{\mathscr{H}^{#1,#2}_{#3,#4}\left(#5\right)}
+\newcommand{\Fox}[5]{H^{#1,#2}_{#3,#4}\left(#5\right)}
+\newcommand{\pDefine}[1]{\mathpzc{#1}}
+\newcommand{\pC}{\pDefine{c}}
+\newcommand{\pM}{\pDefine{m}}
+\newcommand{\pN}{\pDefine{n}}
+\newcommand{\pP}{\pDefine{p}}
+\newcommand{\pQ}{\pDefine{q}}
+\newcommand{\pK}{\pDefine{k}}
+\newcommand{\pA}[1]{\pDefine{a}_{#1}}
+\newcommand{\pB}[1]{\pDefine{b}_{#1}}
+\newcommand{\pS}[1]{\pDefine{A}_{#1}}
+\newcommand{\pT}[1]{\pDefine{B}_{#1}}
+\newcommand{\aV}{\BB{\pDefine{a}}}
+\newcommand{\bV}{\BB{\pDefine{b}}}
+\newcommand{\sV}{\BB{\pDefine{A}}}
+\newcommand{\tV}{\BB{\pDefine{B}}}
+\newcommand{\aVn}{\aV^{\left(1\right)}}
+\newcommand{\aVp}{\aV^{\left(2\right)}}
+\newcommand{\bVm}{\bV^{\left(1\right)}}
+\newcommand{\bVq}{\bV^{\left(2\right)}}
+\newcommand{\sVn}{\sV^{\left(1\right)}}
+\newcommand{\sVp}{\sV^{\left(2\right)}}
+\newcommand{\tVm}{\tV^{\left(1\right)}}
+\newcommand{\tVq}{\tV^{\left(2\right)}}
+\newcommand{\braket}[2]{\left \langle #1 \middle| #2 \right \rangle}
+\newcommand{\braketmatrix}[3]{\left \langle #1 \middle| #2 \middle| #3 \right \rangle}
+
+
+\newcommand{\FoxT}[4]{\mathbbmss{H}_{#1:#2}\left\{#3;#4\right\}}
+\newcommand{\oV}{\mathcal{O}}
+\newcommand{\FHT}[2]{\xleftrightarrow[\left(#1;#2\right)]{\mathbbmss{H}}}
+\newcommand{\rvec}[1]{\accentset{\leftarrow}{#1}}
+
+\newcommand{\Lp}[2]{\mathfrak{L}_{#1}\left(#2\right)}
+\newcommand{\DHT}[2]{\xleftrightarrow[\left(#1:#2\right)]{\mathbbmss{H}^\star}}
+\newcommand{\DFoxT}[4]{\mathbbmss{H}^\star_{\left(#1:#2\right)}\left\{#3;#4\right\}}
+
+\newcommand{\eOP}[3]{\left\langle #1,#2,#3\right|}
+\newcommand{\bra}[1]{\left\langle #1\right|}
+\newcommand{\ket}[1]{\left|#1\right\rangle}
+\newcommand{\stdOP}[2]{#1 \boxdot #2}
+\newcommand{\canOP}[2]{#1 \boxplus #2}
+
+\newcommand{\nFoxV}[5]{\accentset{\circ}{\mathscr{H}}^{#1,#2}_{#3,#4}\left(#5\right)}
+%\newcommand{\nFoxV}[5]{\mathscr{NH}^{#1,#2}_{#3,#4}\left(#5\right)}
+
+\newcommand{\FoxRV}[2]{\mathscr{H}\left(#1:#2\right)}
+%\newcommand{\nFoxRV}[2]{\accentset{\circ}{\mathscr{H}}\left(#1;#2\right)}
+\newcommand{\nFoxRV}[3]{\grave{\mathscr{H}}_{#3}\left(#1:#2\right)}
+
+
+\newcommand{\GFox}[6]{H^{#1}_{#2}
+                        \left[
+                            \begin{matrix}
+                            {#3} \\  {#4}
+                            \end{matrix}
+                            \left|
+                            \begin{array}{c}
+                                {#5}
+                                \\
+                                {#6}
+                            \end{array}
+                            \right.
+                        \right]}
+
+\newcommand{\FoxTs}[5]{\mathbbmss{H}_{#1:#2}\left\{#3;#4\right\}_{\left\langle#5\right\rangle}}
+
+\newcommand{\FoxHT}[5]{\mathbbmss{H}^{#1}_{#2}\left(#3\right)\left\{#4;#5\right\}}
+\newcommand{\FoxHTs}[6]{\mathbbmss{H}^{#1}_{#2}\left(#3\right)\left\{#4;#5\right\}_{\left\langle#6\right\rangle}}
+
+
+\newcommand{\pe}[1]{\pDefine{e}_{#1}}
+\newcommand{\pf}[1]{\pDefine{f}_{#1}}
+\newcommand{\pE}[1]{\pDefine{E}_{#1}}
+\newcommand{\pF}[1]{\pDefine{F}_{#1}}
+\newcommand{\eV}{\BB{\pDefine{e}}}
+\newcommand{\fV}{\BB{\pDefine{f}}}
+\newcommand{\EV}{\BB{\pDefine{E}}}
+\newcommand{\FV}{\BB{\pDefine{F}}}
+
+\newcommand{\pAlpha}[1]{\pDefine{\alpha}_{#1}}
+\newcommand{\pBeta}[1]{\pDefine{\beta}_{#1}}
+\newcommand{\alphaV}{\BB{\pDefine{\alpha}}}
+\newcommand{\betaV}{\BB{\pDefine{\beta}}}
+\newcommand{\alphaVn}{\alphaV^{\left(1\right)}}
+\newcommand{\alphaVp}{\alphaV^{\left(2\right)}}
+\newcommand{\betaVm}{\betaV^{\left(1\right)}}
+\newcommand{\betaVq}{\betaV^{\left(2\right)}}
+
+\newcommand{\TwoFoxH}[6]{H^{#1}_{#2}
+                        \left[
+                            \begin{matrix}
+                            {#3} \\  {#4}
+                            \end{matrix}
+                            \left|
+                            \begin{array}{c}
+                                {#5}
+                                \\
+                                {#6}
+                            \end{array}
+                            \right.
+                        \right]}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%------- enumitem: Customize space in itemize ----------
+% \topsep = space between first item and preceding paragraph
+% \partopsep = extra space added to \topsep when environment starts
+%    a new paragraph.
+
+\usepackage{enumitem}
+
+\setenumerate{topsep=0.45em, partopsep=0em, parsep=0.3em,
+itemsep=0em}
+
+%\setitemize{topsep=0.45em, partopsep=0em, parsep=0.3em, itemsep=0em}
+
+
+%\renewcommand{\rmdefault}{phv} % Arial
+%\renewcommand{\sfdefault}{phv} % Arial
+\usepackage{palatino} 
+
+
+\setitemize{topsep=0.3em, partopsep=0em, parsep=0.1em,
+itemsep=0.2em}
+
+\usepackage{pifont} 
+
+%\addtolength{\parskip}{0.4ex}
+
+\newtheorem{keynote}{}
+\newtheorem{postulate}{Postulate}
+
+%\renewcommand{\theequation}{\thesection.\arabic{equation}}
+\renewcommand{\thefigure}{\thesection.\arabic{figure}}
+%\renewcommand{\thekeynote}{\thesection.\arabic{keynote}}
+
+
+\newcommand{\mybox}[1]{
+\begin{center}
+   \framebox[10cm]{\raisebox{-0.45cm}{\bf \Large #1}}
+\end{center}
+\medskip }
+
+\definecolor{MyBg}{RGB}{255,215,215}
+
+
+\newcommand{\BoxNote}[3]{
+	\begin{figure*}[!h]
+	\begin{center} 
+   		\colorbox{MyBg}{
+         	\begin{minipage}[t]{0.975\textwidth}
+			\vspace{0.2cm}
+         		\begin{keynote} %\label{#1}
+				\textbf{#2}
+         		\end{keynote}
+			{#3}
+			\vspace{0.1cm} 
+         	\end{minipage}
+   		} 
+	\end{center}
+	\end{figure*}
+}
+
+\DeclareMathOperator{\AM}{\lvert}
+
+ 
+\begin{document}
+
+\begin{center}
+Kyung Hee University\\
+Communications and Quantum Information Laboratory\\[0.7cm]
+
+{\LARGE \textbf{Notes : Introduction to Quantum Algorithms}}\\[0.7cm]
+ Amirul Adlil Hakim\\ 
+Director: Hyundong Shin\\[1cm]
+\end{center}
+
+(This is a note that I made by myself to study quantum algorithms from \cite{lin2022lecture}. All the contents was in the original source, I just paraphrased it here.)
+\section{Preliminaries on quantum computation}
+\subsection{Postulates on quantum mechanics}
+\subsubsection{State space postulate}
+A state space is a complex vector space with inner product structure, known as the Hilbert space $\mathcal{H}$, that is formed by a set of all quantum states of a quantum system.
+The space $\mathcal{H}$ is isomorphic to some $\mathbb{C}^N$ if it is finite dimensional, and can be taken as $\mathcal{H} = \mathbb{C}^N$. We assume that $N = 2^n$ for some non-negative
+integer $n$ which we will refer as qubits. A quantum state $\psi \in \mathbb{C}^N$ can be expressed in terms of its components as
+\begin{equation}
+    \psi = \begin{bmatrix}
+        \psi_0 \\
+        \psi_1 \\
+        \cdot \\
+        \cdot \\
+        \psi_{N-1}
+    \end{bmatrix},
+\end{equation}
+that has a Hermitian conjugate which is
+\begin{equation}
+    \psi^\dagger = \begin{bmatrix}
+        \psi_0^* & \psi_1^* & \cdot & \cdot & \psi_{N-1}^*
+    \end{bmatrix}.
+\end{equation}
+We use the Dirac notation, $\ket{\psi}$ for the quantum state and $\bra{\psi^\dagger}$ for its Hermitian conjugate. Using this notation, we can denote the inner product between two quantum states as below
+\begin{equation}
+    \braket{\psi}{\phi} = \psi^\dagger\phi = \sum_{i=0}^{N-1}\psi_i^*\phi_i.
+\end{equation} 
+We can denote the basis of $\mathbb{C}^N$ as $\{\ket{i}\}$, then to find the $i$-th component of $\ket{\phi}$, we can use the inner product $\ket{\phi_i} = \braket{i}{\phi}$. A projection operator can be defined as a matrix 
+that is constructed by the outer product $\bra{\phi}\ket{\psi}$. To find the $(i,j)$-th component of the projection operator matrix, we can use 
+\begin{equation}
+    \bra{i}\ket{\phi}\bra{\psi}\ket{j} = \braket{i}{\phi}\braket{\psi}{j}.
+\end{equation}
+We assume that the state $\ket{\psi}$ is always normalized, $\braket{\psi}{\psi} = 1$, because the state vectors $\ket{\psi}$ and $c\ket{\psi}$ correspond to the same physical state. If $\ket{\phi}$ is normalized, then $c = e^{i\theta}$ for some $\theta \in [0,2\pi)$,
+which we refer as the global phase.
+
+For example, a single qubit can be expressed as a vector that lives in $\mathcal{H} = \mathbb{C}^2$. We can choose one basis for this Hilbert space, namely
+\begin{equation}
+    \ket{0} = \begin{bmatrix}
+        1 \\
+        0
+    \end{bmatrix}, \quad \ket{1} = \begin{bmatrix}
+        0 \\
+        1
+    \end{bmatrix}.
+\end{equation}
+In the context of spin-$\frac{1}{2}$ system which the space state is isomorphic to $\mathbb{C}^2$, the basis above can be seen as representing the spin-up ($\ket{0}$) and spin-down ($\ket{1}$). By using this basis, we can represent a general vector in this space state
+\begin{equation}
+    \ket{\psi} = \begin{bmatrix}
+        \alpha \\
+        \beta
+    \end{bmatrix} = \alpha\ket{0} + \beta\ket{1},
+\end{equation}
+which implies $|\alpha|^2 + |\beta|^2 = 1$ because of normalization. More generally, we can write $\ket{\psi}$ as 
+\begin{equation}
+    \ket{\psi} = \alpha\ket{0} + \beta\ket{1} = \cos(\theta/2)\ket{0} + e^{i\phi}\sin(\theta/2)\ket{1},
+\end{equation}
+where $0\leq\theta<\pi$, $0\leq\psi<2\pi$. By using these angles, we can represent any single qubit state in a three-dimensional sphere known as the Bloch Sphere, where each state can be represented As
+\begin{equation}
+    a = (\sin\theta\cos\psi, \sin\theta\sin\psi, \cos\theta)^T.
+\end{equation}
+
+\subsubsection{Quantum operator postulate}
+A quantum state can evolve from $\ket{\psi} \rightarrow \ket{\psi^{'}} \in \mathbb{C}^N$ if a unitary operator $U \in \mathbb{C}^{N\times N}$ acts on it, such that
+\begin{equation}
+    \ket{\psi^{'}} = U\ket{\psi}.   
+\end{equation}
+The gate in quantum computing typically use this unitary operator, one example is the Pauli matrices defined as follows
+\begin{equation}
+    \sigma_x = \begin{bmatrix}
+        0 & 1 \\
+        1 & 0
+    \end{bmatrix}, \quad \sigma_y = \begin{bmatrix}
+        0 & -i \\
+        i & 0
+    \end{bmatrix}, \quad \sigma_z = \begin{bmatrix}
+        1 & 0 \\
+        0 & -1
+    \end{bmatrix}.
+\end{equation}
+Another examples are the Hadamard gate, the phase gate, and the T gate
+\begin{equation}
+    H = \frac{1}{\sqrt{2}}\begin{bmatrix}
+        1 & 1 \\
+        1 & -1
+    \end{bmatrix}, \quad P = \begin{bmatrix}
+        1 & 0 \\
+        0 & i
+    \end{bmatrix}, \quad T = \begin{bmatrix}
+        1 & 0 \\
+        0 & e^{i\pi/4}
+    \end{bmatrix}.
+\end{equation}
+
+As mentioned before,the evolution of a quantum state at time $t_1$ into $t_2$ is caused by a unitary operator $U(t_2, t_1)$, in which the two quantum states has a linear relation
+\begin{equation}
+    \ket{\psi(t_2)} = U(t_2, t_1)\ket{\psi(t_1)}.
+\end{equation}
+If a time-independent Hamiltonian acts on a quantum state, then we have the following Schr\"{o}dinger equation,
+\begin{equation}
+    i\frac{d\ket{\psi(t)}}{dt} = H\ket{\psi(t)},
+\end{equation}
+where $H = H^\dagger$ is Hermitian. From the above equation, we can obtain the time evolution operator based on the Hamiltonian
+\begin{equation}
+    U(t_2, t_1) = e^{-iH(t_2 - t_1)}.
+\end{equation}
+
+\subsubsection{Quantum measurement postulate}
+The type of quantum measurement that will be discussed here is the projective measurement. The projective measurement can be used to express all quantum measurements of the type positive operator-valued measure (POVM).
+
+Any finite dimensional quantum observable can be represented by a Hermitian matrix that has spectral decomposition
+\begin{equation}
+    M = \sum_{m=0}^{M-1}\lambda_mP_m,
+\end{equation}
+where $\lambda_m \in \mathbb{R}$ are the eigenvalues of $M$ and $P_m$ are the projection operator onto the eigenspace of $\lambda_m$.  
+The measurement of a quantum state by an observable $M$ will always result in one of its eigenvalues $\lambda_m$ with probability 
+\begin{equation}
+    p(m) = \bra{\psi}P_m\ket{\psi}.
+\end{equation}
+A measurement will change the quantum state in a non-unitary manner 
+\begin{equation}
+    \ket{\psi^{'}} = \frac{P_m\ket{\psi}}{\sqrt{p(m)}}.
+\end{equation}
+
+To calculate the expectation value of a quantum observable, we first notice that 
+\begin{equation}
+    \sum_mP_m = I \implies \sum_mp_m = \sum_m\bra{\psi}P_m\ket{\psi} = 1.
+\end{equation}
+This and the fact that $p_m \geq 0$ implies that $\{p_m\}$ is a probability distribution. 
+Therefore, the expectation value of the measurement outcome can be calculated as 
+\begin{equation}
+    \mathbb{E}_\psi(M) = \sum_m\lambda_mp(m) = \sum_m\lambda_m\bra{\psi}P_m\ket{\psi} = \braketmatrix{\psi}{\sum_m\lambda_mP_m}{\psi}=\bra{\psi}M\ket{\psi}.
+\end{equation}
+
+As an example, suppose that $M = X$, then
+\begin{equation}
+    X\ket{\pm} = \lambda_{\pm}\ket{\pm},
+\end{equation}
+where $\ket{\pm} = \frac{1}{\sqrt{2}}(\ket{0} \pm \ket{1})$ and $\lambda_{\pm} = \pm 1$. From this, we can obtain the eigendecomposition of $M$,
+\begin{equation}
+    M = X = \ket{+}\bra{+} - \ket{-}\bra{-}.
+\end{equation}
+If we have a quantum state $\ket{0} = \frac{1}{\sqrt{2}}(\ket{+} + \ket{-})$, then the expectation value of $X$ is $\frac{1}{2}$.
+
+
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,QEM}
+
+
+\end{document}
