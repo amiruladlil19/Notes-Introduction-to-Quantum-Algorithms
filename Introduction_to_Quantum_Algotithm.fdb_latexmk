@@ -1,15 +1,15 @@
 # Fdb version 4
-["bibtex Introduction_to_Quantum_Algotithm"] 1714261781.29685 "Introduction_to_Quantum_Algotithm.aux" "Introduction_to_Quantum_Algotithm.bbl" "Introduction_to_Quantum_Algotithm" 1714261867.42585 0
+["bibtex Introduction_to_Quantum_Algotithm"] 1714261781.29685 "Introduction_to_Quantum_Algotithm.aux" "Introduction_to_Quantum_Algotithm.bbl" "Introduction_to_Quantum_Algotithm" 1714334107.42462 0
   "./QEM.bib" 1714261766.10291 8287 3e3eaae768e46a9a1daa1ed3920dcadd ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bib/ieeetran/IEEEabrv.bib" 1440712899 20898 a5d2167c380db7dfff810b085c77ed63 ""
   "/usr/local/texlive/2024/texmf-dist/bibtex/bst/ieeetran/IEEEtran.bst" 1440712899 57748 7c8250ecf02814ce6ddc0cdbb63df1dd ""
-  "Introduction_to_Quantum_Algotithm.aux" 1714261867.11772 747 c02cac87bc628a385f477aa3d02b83bf "pdflatex"
+  "Introduction_to_Quantum_Algotithm.aux" 1714334107.11222 747 c02cac87bc628a385f477aa3d02b83bf "pdflatex"
   (generated)
   "Introduction_to_Quantum_Algotithm.bbl"
   "Introduction_to_Quantum_Algotithm.blg"
   (rewritten before read)
-["pdflatex"] 1714261866.62603 "/Users/amiruladlilhakim/Documents/Notes/Introduction to Quantum Algorithms/Introduction_to_Quantum_Algotithm.tex" "Introduction_to_Quantum_Algotithm.pdf" "Introduction_to_Quantum_Algotithm" 1714261867.42598 0
-  "/Users/amiruladlilhakim/Documents/Notes/Introduction to Quantum Algorithms/Introduction_to_Quantum_Algotithm.tex" 1714261866.50582 14149 015eb93ef78010fe43823c09f0c194d9 ""
+["pdflatex"] 1714334106.62316 "/Users/amiruladlilhakim/Documents/Notes/Notes-Introduction-to-Quantum-Algorithms/Introduction_to_Quantum_Algotithm.tex" "Introduction_to_Quantum_Algotithm.pdf" "Introduction_to_Quantum_Algotithm" 1714334107.42475 0
+  "/Users/amiruladlilhakim/Documents/Notes/Notes-Introduction-to-Quantum-Algorithms/Introduction_to_Quantum_Algotithm.tex" 1714261866.50582 14149 015eb93ef78010fe43823c09f0c194d9 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/enc/dvips/base/8r.enc" 1165713224 4850 80dc9bab7f31fb78a000ccfed0e27cab ""
   "/usr/local/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map" 1577235249 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/usr/local/texlive/2024/texmf-dist/fonts/tfm/adobe/palatino/pplb7t.tfm" 1136768653 1616 371d1ee60c04b008c8fd760060cd34f1 ""
@@ -124,7 +124,7 @@
   "/usr/local/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1714153675 8221430 bc1a5055a8dba01b897be60386e429aa ""
   "/usr/local/texlive/2024/texmf.cnf" 1710266656 577 e590dabc9e28c5b61546e15f63eebcdf ""
   "HShinInclude" 0 -1 0 ""
-  "Introduction_to_Quantum_Algotithm.aux" 1714261867.11772 747 c02cac87bc628a385f477aa3d02b83bf "pdflatex"
+  "Introduction_to_Quantum_Algotithm.aux" 1714334107.11222 747 c02cac87bc628a385f477aa3d02b83bf "pdflatex"
   "Introduction_to_Quantum_Algotithm.bbl" 1714261781.39699 1024 c0334ef4b2ae881093559949fad5b301 "bibtex Introduction_to_Quantum_Algotithm"
   "Introduction_to_Quantum_Algotithm.tex" 1714261866.50582 14149 015eb93ef78010fe43823c09f0c194d9 ""
   (generated)
