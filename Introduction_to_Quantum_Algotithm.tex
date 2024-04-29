@@ -367,7 +367,53 @@ where $\ket{\pm} = \frac{1}{\sqrt{2}}(\ket{0} \pm \ket{1})$ and $\lambda_{\pm} =
 \end{equation}
 If we have a quantum state $\ket{0} = \frac{1}{\sqrt{2}}(\ket{+} + \ket{-})$, then the expectation value of $X$ is $\frac{1}{2}$.
 
+\section{Grover's algorithm}
+\subsection{Deutsch's algorithm}
+The problem that this algorithm can solve can be analoized as this one: We have two boxes, each of them may contain either an apple or an orange. How do we know
+if the two boxes contain the same fruit or not? We can open the two boxes to know the type of the fruit in each box, it is impossible to know whether the two boxes contain
+the same fruits or not without knowing them. Deutsch's algorithm tries to solve this problem without knowing the fruit in each box. This kind of problem can be modelled mathematically as follows: Consider
+a boolean function $f:\{0,1\} \rightarrow \{0,1\}$, the question is whethere $f(0) = f(1)$ or $f(0) \neq f(1)$. A quantum fruit-checker uses a quantum oracle to implement a function $f$ such as 
+\begin{equation}
+    U_f\ket{x,y} = \ket{x,y\oplus f(x)}, \quad x,y \in \{0,1\},
+    \end{equation}
+    while a classical fruit-checker can only query $U_f$ as 
+    \begin{equation}
+        U_f\ket{0,0} = \ket{0,f(0)}, \quad U_f\ket{0,1} = \ket{0,f(1)}, \quad U_f\ket{1,0} = \ket{1,f(0)}, \quad U_f\ket{1,1} = \ket{1,f(1)}.
+    \end{equation}
+The quantum fruit-checker can apply $U_f$ to a linear combination of states in the computational basis. We can show that $U_f$ is unitary.
+\begin{equation} \label{eq1}
+    \begin{split}
+    \bra{x^{'},y^{'}}U^\dagger_f{U_f\ket{x,y}} & = \braket{x^{'},y^{'}\oplus f(x^{'})}{x,y\oplus f(x)} \\
+     & = \braket{x^{'}}{x}\braket{y^{'}\oplus f(x^{'})}{y\oplus f(x)} \\
+     & = \delta_{x,x^{'}}\delta_{y,y^{'}} \\
+    \end{split}
+    \end{equation}
+which gives $U^\dagger_fU_f = I$.
 
+The Deutsch's algorithm convert the oracle $U_f$ into a phase kickback. Let $\ket{y} = \ket{-} = \frac{1}{\sqrt{2}}(\ket{0} - \ket{1}),$ then
+\begin{equation}
+    U_f\ket{x,y} = \frac{1}{\sqrt{2}}(\ket{x,f(x)} - \ket{x,1\oplus f(x)}) = (-1)^{f(x)}\ket{x,y}.
+\end{equation}
+We know that $\ket{y} = HX\ket{0}$, then we can write 
+\begin{equation}
+    (I\oplus XH)U_f(I\oplus HX)\ket{x,0} = (-1)^{f(x)}\ket{x,0}.
+\end{equation}
+The $XH$ application can be viewed as the uncomputation step. Focusing on the first qubit only, we have 
+\begin{equation}
+    \tilde{U}_f\ket{x} = (-1)^{f(x)}\ket{x}.
+\end{equation}
+The information of $f(x)$ is stored as a phase factor of $\ket{x}$. The quantum operation for Deutsch's algorithm is as follows:
+\begin{align}
+        \ket{0,1} &\xrightarrow{H\otimes H}{\ket{+,-}} = \frac{1}{2}(\ket{0}+\ket{1})\otimes\ket{-}  \nonumber \\
+        &\xrightarrow{U_f}{\frac{1}{2}(\ket{0}(-1)^{f(0)} + \ket{1}(-1)^{f(1)})\otimes\ket{-}} \nonumber\\
+        &\xrightarrow{H\otimes I}\frac{1}{2}((-1)^{f(0)} + (-1)^{f(1)})\ket{0,-} + \frac{1}{2}((-1)^{f(0)} - (-1)^{f(1)})\ket{1,-}. \nonumber\\
+\end{align}
+We only need one query of $U_f$ to check if the boxes contain the same fruits or not. When we have $f(0) = f(1)$, measuring the first qubit will result in 0 deterministically, and if we have $f(0) \neq f(1)$, then measuring the first qubit
+will result in 1 deterministically. 
+
+\subsection{Unstructured search problem}
+Now we want to find one box with an orange among $N = 2^n$ boxes, and each of other boxes contain an apple. Mathematically, we have a boolean function $f: \{0,1\}^n \rightarrow \{0,1\}$, and we want to find one marked $x_0$ such that $f(x_0) = 1$. In the worst scenario of the classical method, 
+we need to open $N-1$ boxes to get $x_0$.
 
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,QEM}
