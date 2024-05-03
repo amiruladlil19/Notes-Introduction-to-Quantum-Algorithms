@@ -413,7 +413,73 @@ will result in 1 deterministically.
 
 \subsection{Unstructured search problem}
 Now we want to find one box with an orange among $N = 2^n$ boxes, and each of other boxes contain an apple. Mathematically, we have a boolean function $f: \{0,1\}^n \rightarrow \{0,1\}$, and we want to find one marked $x_0$ such that $f(x_0) = 1$. In the worst scenario of the classical method, 
-we need to open $N-1$ boxes to get $x_0$.
+we need to open $N-1$ boxes to get $x_0$. Using a quantum algorithm known as the Grover's algorithm that relies to an oracle 
+\begin{equation}
+    U_f\ket{x,y} = \ket{x, y\oplus f(x)}, \quad x \in \{0,1\}^n, y \in \{0,1\},
+\end{equation}
+we can find $x_0$ with $\mathcal{O}(\sqrt{N})$ queries. The classical probabilistic algorithm can only work on the probability density while the quantum algorithms can work with 
+wavefunction amplitudes, of wich the square results in the probability densities. This is the source of  the quadratic speedup of the Grover's algorithm. 
+
+The scenario of Grover's algorithm is as follows: we have an initial state which is the uniform superposition of all possible states; 
+\begin{equation}
+    \ket{\psi_0} = \frac{1}{\sqrt{N}}\sum_{x=0}^{N-1}\ket{x}.
+\end{equation}
+This superposition can be prepared by using the Hadamard gates on $n$ qubits, as follows: 
+\begin{equation}
+    \ket{\psi_0} = H^{\otimes n}\ket{0^n}.
+\end{equation}
+To find the state $\ket{x_0}$, we would like to amplifiy its wavefunction amplitude from $1/\ket{N}$ to $\sqrt{p} = \Omega(1)$ by using only $\mathcal{O}(\sqrt{N})$ queries to the oracle $U_f$. By measuring 
+the amplitude-amplified state, we can get an output state $\ket{x}$. To check if $x = x_0$, we apply another query of $U_f$ such that $U_f\ket{x,0} = \ket{x, f(x)}$. We will get $f(x) = 1$ with probability $p$. It's still probabilistic, so if we don't get the right $x_0$ for the first time, 
+we repeat the process. We will obtain $x_0$ with high probability after $\mathcal{O}(1/p)$ times of repetition.
+
+The first step of the Grover's algorithm is we take $\ket{y} = \ket{-}$ and then we turn the oracle into a phase kickback
+\begin{equation}
+    U_f\ket{x,-} = \frac{1}{\sqrt{2}}(\ket{x, f(x)} - \ket{x, 1\oplus f(x)}) = (-1)^{f(x)}\ket{x,-}.
+\end{equation}
+We can decompose any quantum state $\ket{\psi}$ as 
+\begin{equation}
+    \ket{\psi} = \alpha\ket{x_0} + \beta\ket{\psi_{\perp}},
+\end{equation}
+where $\braket{\psi_{\perp}}{\psi_0} = 0$. Therefore, we have 
+\begin{equation}
+    U_f\ket{\psi}\otimes\ket{-} = -\alpha\ket{x_0}\otimes\ket{-} + \beta\ket{\psi_{\perp}}\otimes\ket{-}.
+\end{equation}
+This is because $f(x) = 0$ for $x$ other than $x_0$. We can discard $\ket{-}$ to obtain an $n$-qubit unitary 
+\begin{equation}
+    R_{x_0}(\alpha\ket{\psi_0} + \beta\ket{\psi_{\perp}}) = -\alpha\ket{x_0} + \beta\ket{\psi_{\perp}}.
+\end{equation}
+Therefore, $R_{x_0}$ is a reflection operator across the hyperplane orthogonal to $\ket{x_0}$ which is known as the Householder reflector 
+\begin{equation}
+    R_{x_0} = I - 2\ket{x_0}\bra{x_0}.
+\end{equation}
+
+We can write 
+\begin{equation}
+    \ket{\psi_0} = \sin(\theta/2)\ket{x_0} + \cos(\theta/2)\ket{\psi_{0\perp}},
+\end{equation}
+where $\theta = 2\sin^{-1}\frac{1}{\sqrt{N}} \approx \frac{2}{\sqrt{N}}$ and $\ket{\psi_{0\perp}} = \frac{1}{\sqrt{N-1}}\sum_{x\neq x_0}\ket{x}$. Then 
+\begin{equation}
+    R_{x_0}\ket{\psi_0} = -\sin(\theta/2)\ket{x_0} + \cos(\theta/2)\ket{\psi_{0\perp}}.
+\end{equation}
+Thus span$\{\ket{x_0},\ket{\psi_{0\perp}}\}$ is an invariant subspace of $R_{x_0}$. 
+
+We can consider another Householder reflector, 
+\begin{equation}
+    R_{\psi_{0}} = -(I - 2\ket{\psi_{0\perp}}\bra{\psi_{0\perp}}).
+\end{equation}
+By using both of the Householder reflectors, we can obtain 
+\begin{align}
+    R_{\psi_{0}}R_{x_0}\ket{\psi_0} &= R_{\psi_0}(\ket{\psi_0} - 2\sin(\theta/2)\ket{x_0}) \nonumber \\
+    &= (\ket{\psi_0} - 4\sin^2(\theta/2)\ket{\psi_0}) + 2\sin(\theta/2)\ket{x_0} \nonumber \\ 
+    &= \sin(\theta/2)(3 - 4\sin^2(\theta/2))\ket{\psi_0} + \cos(\theta/2)(1 - 4\sin^2(\theta/2))\ket{\psi_{0\perp}}\nonumber \\ 
+    &= \sin(3\theta/2)\ket{x_0} + \cos(3\theta/2)\ket{\psi_{0\perp}}.\nonumber \\ 
+\end{align}
+We dub the operator above as the Grover operator $G$. We can see that it amplifies the amplitude of $x_0$ from $\sin(\theta/2)$ into $\sin(3\theta/2)$ while decreasing the amplitude of the states orthogonal to $\ket{x_0}$. We can apply $G$ for $k$ times to obtain 
+\begin{equation}
+    G^k\ket{\psi_0} = \sin((2k+1)\theta/2)\ket{x_0} + \cos((2k+1)\theta/2)\ket{\psi_{0\perp}}.
+\end{equation}
+We want the amplitude of $\ket{x_0}$ as close as 1 as possible. Thus for $\sin(2k+1)\theta/2 \approx 1$, we need $k \approx \frac{\pi}{2\theta} - \frac{1}{2}\approx \frac{\pi}{4}\sqrt{N}$ (because $\theta \approx 2/\sqrt{N}$). This proves that it takes $\mathcal{O}(\sqrt{N})$ queries to find the marked state $x_0$ by using the Grover's algorithm.
+
 
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,QEM}
