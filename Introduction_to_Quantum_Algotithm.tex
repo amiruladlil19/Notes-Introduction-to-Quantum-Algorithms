@@ -608,6 +608,58 @@ If we assume that $\theta\approx 0$ and we would like to estimate it to additive
 \end{equation}
 That means, $p(1)$ needs to be estimated to precision $\mathcal{O}(\epsilon^2)$ and the number of samples needed is $\mathcal{O}(1/\epsilon^2)$.
 
+\subsection{Kitaev's method for quantum phase estimation}
+From the previous subsection. we obtain that the number of measurement needed to estimate $\theta$ to precision $\epsilon$ is $\mathcal{O}(1/\epsilon^2)$. A procedure known as the Kitaev's method can improve the number of measurement quadratically $(\mathcal{O}(1/\epsilon))$. 
+
+We assume that the eigenvalue can be exactly represented by using $d$ bits in the fixed point representation 
+\begin{equation}
+    \theta = 0.\theta_{d-1}\theta_{d-2}\cdots\theta_0.
+\end{equation}
+If $d = 1$, we have $\theta = 0.\theta_0$, where $\theta\in\{0,1\}$. Then we have $e^{i2\pi\theta} = e^{i\pi\theta_0}$. By using the real Hadamard test, we can obtain that $p(1) = 0$ if $\theta_0 = 0$ and $p(1) = 1$ if $\theta_0 = 1$, whcih is a deterministic result. We only need one measurement of qubit 1 to determine $\theta_0$.
+
+If we consider $\theta = .0\cdot0\theta_0$, we need to reach precision $\epsilon < 2^{-d}$ to determine the value of $\theta_0$. This means we need $\mathcal{O}(1/\epsilon^2) = \mathcal{O}(2^{2d})$ repeated measurements or number of queries to $U$. In the Kitaev's method, we have access to $U^j$ for a suitable power $j$ to reduce the number of queries to $U$. Specifically, if we can query $U^{2^{d-1}}$, then we have 
+\begin{equation}
+    p(1) = \frac{1}{2}(1 - \cos(2\pi.\theta_0)) = \begin{cases}
+        0, & \text{if } \theta_0 = 0, \\
+        1, & \text{if } \theta_0 = 1.
+    \end{cases}
+\end{equation}
+The total number of queries of $U$ becomes $\mathcal{O}(2^d)$ and the result is again deterministic.
+
+As we explained above, the Kitaev's method use a more complex quantum circuit with a larger circuit depth to reduce the total number of queries. Instead of estimating $\theta$ from a single number, we estimate $\theta$ bit-by-bit by assuming access to $U^{2j}$. This allows us to estimate 
+\begin{equation}
+    2^j\theta = \theta_{d-1}\cdots\theta_{d-j}.\theta_{d-j-1}\cdots\theta_0 = .\theta_{d-j-1}\cdots\theta_0 \quad \text{mod } 1.
+\end{equation}
+The goal of the algorithm is to estimate the $d$ digits for any $\theta$, and we want to describe and analyze the performance. 
+
+First, we can apply the circuit of the real hadamard test with $U^{2^j}$ with $j = 0,1,\cdots,d-3$ to estimate $p(0)$ fro each $j$ so the error in $2^j\theta$ is less than $1/16$, which means that any perturbation must be due to the 5th digit in the binary representation. We denote the closest 3-bit estimate of $\alpha_j$ mod 1 by $\beta_j$. For example, for $2^j\theta = 0.11110$, if $\alpha_j = 0.11101$, then $\beta_j = 0.1111$. But if $\alpha_j = 0.11111$, then $\beta_j = 0.0000$. Another example is if we have $2^j\theta = 0.11101$, if $\alpha_j = 0.11110$, then we have $\beta_j = 0.111$ for rounded down estimation and $\beta_j = 0.000$ for rounded up estimation. We can show that the uncertainty in $\alpha_j$ and $\beta_j$ is not detrimental to the algorithm.
+
+Then, we can perform some post-processing. Start from $j = d-3$, we can estimate $.\theta_2\theta_1\theta_0$ to accuracy $1/16$. We will proceed with the iteration: for $j = d-4,\cdots,0$, we assign 
+\begin{equation}
+    \theta_{d-j-1} = \begin{cases}
+        0, & |.0\theta_{d-j-2}\theta_{d-j-3} - \beta_j|_{\text{mod }1} < 1/4, \\
+        1, & |.1\theta_{d-j-2}\theta_{d-j-3} - \beta_j|_{\text{mod }1} < 1/4.
+    \end{cases}
+\end{equation}
+After running the algorithm above, we can recover $\theta = .\theta_{d-1}\cdots\theta_0$ exactly. The number of queries to $U$ is the total cost of Kitaev's method, which is $\mathcal{O}(\sum_{j=0}^{d-3}2^j) = \mathcal{O}(\epsilon^{-1})$.
+
+For example, we consider $\theta = 0.\theta_4\theta_3\theta_2\theta_1\theta_0 = 0.11111$ with $d=5$. If we run the Kitaev's algorithm for $j = 0,1,2$, we will obtain 
+\begin{equation*}
+    \begin{tabular}{||c c c||} 
+        \hline
+        $j$ & $2^j\theta$ & $\text{possible }\beta_j$ \\ [0.5ex] 
+        \hline\hline
+        0 & 0.11111 & $\{0.111,0.000\}$  \\ 
+        \hline
+        1 & 0.1111 & $\{0.111,0.000\}$   \\
+        \hline
+        2 & 0.111 & $\{0.111\}$   \\
+        \hline
+        
+       \end{tabular}
+\end{equation*}
+Start with $j = 2$, we only have one $\beta_j$, therefore we can recover $0.\theta_2\theta_1\theta_0 = 0.111$. For $j = 1$, we need to decide $\theta_3$ by using the above equation. If $\beta_j = 0.111$, we have $\theta_3 = 1$, and if $\beta_j = 0.000$, our choice is still $\theta_3 = 1$, since $|.011-.000|_{\text{mod }1} = 0.101 = 3/8 > 1/4$ and $|.111-.000|_{\text{mod }1} = 0.001 = 1/8 < 1/4$. We can also do the same for $j=0$, and we can obtain $\theta_4 = 1$, which recovers $\theta$ exactly.
+
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,QEM}
 
