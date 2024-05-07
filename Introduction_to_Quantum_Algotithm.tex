@@ -480,6 +480,133 @@ We dub the operator above as the Grover operator $G$. We can see that it amplifi
 \end{equation}
 We want the amplitude of $\ket{x_0}$ as close as 1 as possible. Thus for $\sin(2k+1)\theta/2 \approx 1$, we need $k \approx \frac{\pi}{2\theta} - \frac{1}{2}\approx \frac{\pi}{4}\sqrt{N}$ (because $\theta \approx 2/\sqrt{N}$). This proves that it takes $\mathcal{O}(\sqrt{N})$ queries to find the marked state $x_0$ by using the Grover's algorithm.
 
+\subsection{Amplitude amplification}
+Another use case of the Grover's algorithm other than the unstructured search is amplitude amplification. Suppose we want to prepare $\ket{\psi_0}$ by using an oracle $U\ket{0^n} = \ket{\psi_0}$ and the $\ket{\psi_0}$ itself is a superposition state as follows:
+\begin{equation}
+    \ket{\psi_0} = \sqrt{p_0}\ket{\psi_{\text{good}}} + \sqrt{1-p_0}\ket{\psi_{\text{bad}}}.
+\end{equation}
+We want the state $\ket{\psi_{\text{good}}}$ but cannot obtain it directly, but we have hope to obtain a state that is largely overlap with $\ket{\psi_{\text{good}}}$. In other words, we want to amplify its amplitude. 
+
+If we bring this problem into the unstructured search problem, we have $\ket{\psi_{\text{good}}} = \ket{x_0}$ and $p_0 = 1/N$. We don't have access to the answer $\ket{x_0}$ but we assume that we have access to its reflection operator. In this problem, we also assume that we have access to the reflection operator 
+\begin{equation}
+    R_{\text{good}} = I - 2\ket{\psi_{\text{good}}}\bra{\psi_{\text{good}}}.
+\end{equation}
+By using the oracle $U_{\psi_0}$, we can construct the reflection with respect to the initial state 
+\begin{equation}
+    R_{\psi_0} = 2\ket{\psi_0}\bra{\psi_0} - I = U_{\psi_0}(2\ket{0^n}\bra{0^n} - I)U_{\psi_0}^\dagger.
+\end{equation}
+Therefore, we obtain two reflection operators that can be used to construct the Grover operator, 
+\begin{equation}
+    G = R_{\psi_0}R_{\text{good}}.
+\end{equation}
+We can obtain a state that has $\omega(1)$ overlap with $\ket{\psi_{\text{good}}}$ by applying $G^k$ to $\ket{\psi_0}$ for some $k = \mathcal{O}(1/\sqrt{p_0})$.
+
+\subsection{Lower bound of query complexity}
+The Grover's algorithm can find $x_0$ with constant probability by making $\mathcal{O}(\sqrt{N})$ times querying $R_{x_0}$. There has not been any quantum algorithm that can do it fewer than $\Omega(\sqrt{N})$ access to $R_{x_0}$.
+
+Generally, we can express any quantum search algorithm that starts from an initial state $\ket{\psi_0}$ and queries $R_{x_0}$ for $k$ steps as the following 
+\begin{equation}
+    \ket{\psi_k^{x_0}} = U_k^{x_0}\ket{\psi_0} = U_kR_{x_0}U_{k-1}R_{x_0}\cdots U_1R_{x_0}\ket{\psi_0},
+\end{equation}
+for some unitaries $\{U_i\}$. For simplicity, we can assume that the algorithm does not use any ancilla qubit, as the result can be generalized to the case in the presence of ancilla qubits. The superscipt $x_0$ indicates that the state depends on the marked state $x_0$, and solving the search problem means we obtain $\ket{\psi_k^{x_0}}$ such that 
+\begin{equation}
+    |\braket{\psi_k^{x_0}}{x_0}|^2 \geq \frac{1}{2}.
+\end{equation}
+In other words, we can obtain $\ket{x_0}$ with probability at least $1/2$ by measuring $\ket{\psi_k^{x_0}}$ in the computational basis. We can prove the queries lower bound of the quantum search algorithm by comparing the action of $U_k^{x_0}$ with a "fake algorithm" with the unitary $U_k$ that can be defined as follows 
+\begin{equation}
+    \ket{\psi_k} = U_k\ket{\psi_0} = U_kU_{k-1}\cdots U_1\ket{\psi_0}.
+\end{equation}
+We can not obtain the marked state $x_0$ from this algorithm because its final state $\ket{\psi_k}$ does not contain any information of $x_0$.
+
+We will use the following discrete $l_2$-norm
+\begin{equation}
+    ||f||_{l_2} = \sqrt{\sum_{x_0\in[N]}||f^{x_0}||},
+\end{equation}
+for a set of vectors $\{f^{x_0}\}_{x_0\in[N]}$ and each $f^{x_0} \in \mathbb{C}^N$. We also have the following inequality 
+\begin{equation}
+    ||f||_{l_2} - ||g||_{l_2} \leq ||f + g||_{l_2} \leq ||f||_{l_2} + ||g||_{l_2}.
+\end{equation}
+
+We will prove the lower bound with two steps. The first step is we will show the difference between the true and the fake solution as follows 
+\begin{equation}
+    D_k = \sum_{x_0\in[N]}||\ket{\psi_k^{x_0}} - \ket{\psi_k}||^2 = \Omega(N).
+\end{equation}
+In the second step, we will prove that 
+\begin{equation}
+    D_k \leq 4k^2, \quad k \geq 0,
+\end{equation}
+and $D_0 = 0$. Therefore, we must have $k = \Omega(\sqrt{N})$. 
+
+In the first step, we can choose a phase factor $e^{i\theta}$ such that 
+\begin{equation}
+    \braket{\psi_k^{x_0}}{x_0} \geq \frac{1}{\sqrt{2}}.
+\end{equation}
+Therefore, using Cauchy-Schwarz inequality, we have
+\begin{equation}
+    ||\ket{\psi_k^{x_0}} - \ket{x_0}||^2 = 2 - 2\braket{\psi_k^{x_0}}{x_0} \leq 2 - \sqrt{2}.
+\end{equation}
+Therefore, we have 
+\begin{equation}\label{distance_bound}
+    \sum_{x_0\in[N]}||\ket{\psi_k^{x_0}} - \ket{x_0}||^2  \leq 2N - \sqrt{2}N.
+\end{equation}
+Meanwhile, from the fake algorithm, we  will have 
+\begin{equation}
+    \sum_{x_0\in[N]}||\ket{\psi_k} - \ket{x_0}||^2 \geq 2N - 2\sum_{x_0\in[N]}|\braket{x_0}{\psi}|  = 2N - 2\sqrt{N},
+\end{equation}
+which violates the bound in (\ref*{distance_bound}). 
+From the two equations above, by using the triangle inequality, we have 
+\begin{align}
+    D_k = \sum_{x_0\in[N]}||\ket{\psi_k^{x_0}} - \ket{\psi_k}||^2 &= \sum_{x_0\in[N]}||(\ket{\psi_k^{x_0}} - \ket{x_0}) - (\ket{\psi_x} - \ket{x_0})||^2 \\
+    &\geq \left(\sqrt{\sum_{x_0\in[N]}||\ket{\psi_k} - \ket{x_0}||^2} - \sqrt{\sum_{x_0\in[N]}||\ket{\psi_k^{x_0}} - \ket{x_0}||^2}\right)^2 \\
+    &\geq (\sqrt{2N - 2\sqrt{N}} - \sqrt{2N - \sqrt{2}N})^2 = \Omega(N).
+\end{align}
+In other words, we found that the true solution and the fake solution must be well seperated in $l_2$-norm.
+
+\section{Quantum Phase Estimation}
+Let's say we have a unitary $U$ and its eigenvector $\ket{\psi}$ such that 
+\begin{equation}
+    U\ket{\psi} = e^{2\pi i\theta}\ket{\psi},\quad \theta \in [0,1),
+\end{equation}
+and we want to find $\theta$ to a certain precision. This is a task for quantum phase estimation. Using classical computer, we can estimate $\theta$ by using the element-wise division like the following 
+\begin{equation}
+    \bra{j}U\ket{\psi}/\braket{j}{\psi} = e^{2\pi i\theta },
+\end{equation}
+for any $j$ in the computational basis. Unfortunately, we cannot implement the element-wise division efficiently on a quantum computer, therefore, we need another algorithm that can work on a quantum computer. 
+
+\subsection{Hadamard test}
+Hadamard test is a useful tool for computing the expectation value of a unitary operator with respoect to a state, $\bra{\psi}U\ket{\psi}$. The unitary $U$ is generally not Hermitian, therefore $\bra{\psi}U\ket{\psi}$ does not correspond to the measurement of a physical observable and we have to measure the real and imaginary part of the expectation value seperately. 
+
+For the real Hadamard test, we have a circuit that does the following operation 
+\begin{align}
+    \ket{0}\ket{\psi} &\xrightarrow{H\otimes I}\frac{1}{\sqrt{2}}(\ket{0} + \ket{1})\ket{\psi} \nonumber \\
+    &\xrightarrow{c-U}\frac{1}{\sqrt{2}}(\ket{0}\ket{\psi} + \ket{1}U\ket{\psi}) \nonumber \\
+    &\xrightarrow{H\otimes I}\frac{1}{2}\ket{0}(\ket{\psi} + U\ket{\psi}) + \frac{1}{2}\ket{1}(\ket{\psi} - U\ket{\psi}).\nonumber \\
+\end{align}
+Therefore, the probability of measuring the qubit 0 to be in the state $\ket{0}$ is 
+\begin{equation}
+    p(0) = \frac{1}{2}(1 + \text{Re}(\bra{\psi}U\ket{\psi})).
+\end{equation}
+The imaginary part of the Hadamard test performs the following operation to $\ket{0}\ket{\psi}$ 
+\begin{equation}
+    \frac{1}{2}\ket{0}(\ket{\psi} - iU\ket{\psi}) + \frac{1}{2}\ket{1}(\ket{\psi} + iU\ket{\psi}).
+\end{equation}
+Therefore, the probability of mesuring the  qubit 0 to be in state $\ket{0}$ is 
+\begin{equation}
+    p(0) = \frac{1}{2}(1 + \text{Im}(\bra{\psi}U\ket{\psi})).
+\end{equation}
+The Hadamard test can be used to estimate $\theta$. For example in the case of real Hadamard test, the probability of measuring the qubit 0 to be in state $\ket{1}$ is 
+\begin{equation}
+    p(1) = \frac{1}{2}(1 - \text{Re}(\bra{\psi}U\ket{\psi})) = \frac{1}{2}(1 - \cos(2\pi\theta)),
+\end{equation}
+thus 
+\begin{equation}
+    \theta = \pm\frac{1}{2\pi}\cos^{-1}(1 - 2p(1)).
+\end{equation}
+If we assume that $\theta\approx 0$ and we would like to estimate it to additive precision $\epsilon$, we have 
+\begin{equation}
+    p(1)\approx(2\pi\theta)^2=\mathcal{O}(\epsilon^2).
+\end{equation}
+That means, $p(1)$ needs to be estimated to precision $\mathcal{O}(\epsilon^2)$ and the number of samples needed is $\mathcal{O}(1/\epsilon^2)$.
 
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,QEM}
