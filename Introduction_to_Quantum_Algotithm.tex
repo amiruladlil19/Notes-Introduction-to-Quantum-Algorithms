@@ -660,6 +660,117 @@ For example, we consider $\theta = 0.\theta_4\theta_3\theta_2\theta_1\theta_0 = 
 \end{equation*}
 Start with $j = 2$, we only have one $\beta_j$, therefore we can recover $0.\theta_2\theta_1\theta_0 = 0.111$. For $j = 1$, we need to decide $\theta_3$ by using the above equation. If $\beta_j = 0.111$, we have $\theta_3 = 1$, and if $\beta_j = 0.000$, our choice is still $\theta_3 = 1$, since $|.011-.000|_{\text{mod }1} = 0.101 = 3/8 > 1/4$ and $|.111-.000|_{\text{mod }1} = 0.001 = 1/8 < 1/4$. We can also do the same for $j=0$, and we can obtain $\theta_4 = 1$, which recovers $\theta$ exactly.
 
+\subsection{Quantum Fourier transform}
+One of the most widely used algorithms in the classical computing is Fourier transform, with its variant, fast Fourier transform, serves as the backbone for many fast algorithms. In quantum computation, the quantum Fourier transform is an important component in many algorithms such as Shor's algorithm and phase estimation. For any $j$ in the computational basis, the discrete forward Fourier transform is defined as 
+\begin{equation}
+    U_{\text{FT}}\ket{j} = \frac{1}{\sqrt{N}}\sum_{k\in[N]}e^{i2\pi \frac{kj}{N}}\ket{k},
+\end{equation} 
+where in particular,
+\begin{equation}
+    U_{\text{FT}}\ket{0^n} = \frac{1}{\sqrt{N}}\sum_{k\in[N]}\ket{k} = H^{\otimes n}\ket{0^n}.
+\end{equation}
+We will use the binary representation of integers 
+\begin{equation}
+    k = (k_{n-1}\cdots k_0.),\quad j = (j_{n-1}\cdots j_0.),
+\end{equation}
+therefore we have 
+\begin{align}
+    \frac{kj}{N} &= k0\frac{j}{2^n} + k_1\frac{j}{2^{n-1}} + \cdots + k_{n-1}\frac{j}{2} \nonumber\\
+    &= k_0(.j_{n-1}\cdots j_0) + k_1(j_{n-1}.j_{n-2}\cdots j_0) + \cdots + k_{n-1}(j_{n-1}\cdots j_1.j_0). \nonumber\\
+\end{align}
+The exponential then can be written as 
+\begin{equation}
+    e^{i2\pi\frac{kj}{N}} = e^{i2\pi k_0(.j_{n-1}\cdots j_0)}e^{i2\pi k_1(.j_{n-2}\cdots j_0)}\cdots e^{i2\pi k_{n-1}(.j_0)}.
+\end{equation}
+We can write the application of the Fourier transform by using the above representation
+\begin{align}
+    U_{\text{FT}}\ket{j_{n-1}\cdots j_0} &= \frac{1}{\sqrt{2^n}}\sum_{k_{n-1},\cdots ,k_0}e^{i2\pi k_0(.j_{n-1}\cdots j_0)}e^{i2\pi k_1(.j_{n-2}\cdots j_0)}\cdots e^{i2\pi k_{n-1}(.j_0)}\ket{k_{n-1}\cdots k_0}\nonumber \\
+    &= \frac{1}{\sqrt{2^n}}\left(\sum_{k_{n-1}}e^{i2\pi k_{n-1}(.j_0)}\ket{k_{n-1}}\right)\otimes\cdots\otimes\left(\sum_{k_{0}}e^{i2\pi k_{0}(.j_{n-1}\cdots j_0)}\ket{k_{0}}\right) \nonumber\\
+    &= \frac{1}{\sqrt{2}}\left(\ket{0} + e^{i2\pi(.j_0)}\ket{1}\right)\otimes\left(\ket{0} + e^{i2\pi(.j_1j_0)}\ket{1}\right)\otimes\cdots\otimes\left(\ket{0} + e^{i2\pi(.j_{n-1}\cdots j_0)}\ket{1}\right),
+\end{align}
+where a series of controlled rotations of the following form is involved 
+\begin{equation}
+    \ket{0} \rightarrow \frac{1}{\sqrt{2}}\left(\ket{0} + e^{i2\pi(.j_{n-1}\cdots j_0)}\ket{1}\right).
+\end{equation}
+
+\subsection{Quantum phase estimation using quantum Fourier transform}
+The standard quantum phase estimation (QPE) uses one signal quantum circuit based on QFT and requires $d$-ancilla qubits to store the phase information in the quantum computer. We define a controlled unitary operation 
+\begin{equation}
+    U = \sum_{j\in[2^d]}\ket{j}\bra{j}\otimes U^{j},
+\end{equation}
+Thus, when $d = 1$, $U$ is just a controlled $U$ operation. It seems that we need to implement all $2^d$ different $U^j$ in general. However, this is not necessary. If we use the binary representation of integers $j = (j_{d-1}\cdots j_0.) = \sum_{i=0}^{d-1}j_i2^i$, we have $U^j = U^{\sum_{i=0}^{d-1}j_i2^i} = \Pi_{i=0}^{d-1}U^{j_i2^i}$. Therefore, we have
+\begin{align}
+    \mathcal{U} &= \sum_{j\in[2^d]}\ket{j}\bra{j}\otimes U^j \nonumber \\
+    &= \sum_{j_{d-1},\cdots,j_0}(\ket{j_{d-1}}\bra{j_{d-1}})\otimes\cdots\otimes(\ket{j_0}\bra{j_0})\otimes\prod_{i=0}^{d-1}U^{j_i2^i}\nonumber \\ 
+    &= {\prod_{i=0}^{d-1}}^{'}\left(\sum_{j_i}\ket{j_i}\bra{j_i}\otimes U^{j_i2_i}\right) \nonumber \\
+    &= {\prod_{i=0}^{d-1}}^{'}\left(\ket{0}\bra{0}\otimes I_n + \ket{1}\bra{1}\otimes U^{2^i}\right).
+\end{align}
+Let the initial state in the ancilla qubits to be $\ket{0^n}$ that we transform according to 
+\begin{align}\label{QPE_circuit}
+    \ket{0^d}\ket{\psi_0} &\xrightarrow{U_{\text{FT}}\otimes I}  \frac{1}{\sqrt{2^d}}\sum_{j\in[2^d]}\ket{j}\ket{\psi_0} \\
+    &\xrightarrow{\mathcal{U}} \frac{1}{\sqrt{2^d}}\sum_{j\in[2^d]}(\ket{j}\otimes U^j\ket{\psi_0}) = \frac{1}{\sqrt{2^d}}\sum_{j\in[2^d]}\ket{j}e^{i2\pi\phi j}\ket{\psi_0}\nonumber \\
+    &\xrightarrow{U_{\text{FT}}^\dagger\otimes I} \sum_{k^{'}\in [2^d]}\left(\frac{1}{2^d}\sum_{j\in[2^d]}e^{i2\pi j\left(\theta - \frac{k^{'}}{2^d}\right)}\right)\ket{k^{'}}\ket{\psi_0}
+\end{align}
+where we have $\theta = \frac{k}{2^d}$ for some $k\in[2^d]$. We can obtain the phase information by measuring the ancilla qubits, where we will obtain the state $\ket{k\ket{\psi_0}}$ with certainty.
+
+\subsection{Analysis of quantum phase estimation}
+The QPE algorithms assume the following:
+\begin{enumerate}
+    \item $\ket{\psi_0}$ is an eigenstate
+    \item $\theta_0$ has a $d$-bit binary representation.
+\end{enumerate}
+Practically, neither condition can be exactly satisfied, that's why we need to analyze the effect on the error of the QPE. We will assume the only sources of errors are at the mathematical level, for example due to an inexact eigenstate $\ket{\psi}$ or Monte Carlo errors in the readout process due to the probabilistic nature of the measuremnet process. We will study what happens when the conditions are not met. First, we assume that $U$ has the eigendecomposition 
+\begin{equation}
+    U\ket{\psi_j} = e^{i2\pi\theta_j}\ket{\psi_j}.
+\end{equation}
+Without loss of generality, we assume $0\leq\theta_0\leq\theta_1\cdots\leq\theta_{N-1}\leq 1$, and we are interested to find $\theta_0$. 
+
+First, we will assume that $\theta_i$'s have an exact $d$-bit binary representation and the quantum state is given by a linear combination 
+\begin{equation}
+    \ket{\psi_0} = \sum_{k=0}^{N-1}c_k\ket{\psi_k}.
+\end{equation}
+The overlap is $p_0 = |\braket{\psi}{\phi_0}|^2 = |c_0| < 1$. If we apply the QPE operation as in Equation (\ref*{QPE_circuit})  to $\ket{0^t}\ket{\phi}$, with $t = d$, and measure the ancilla qubits, we can obtain the eigenstate $\ket{\psi_0}$ and the binary representation of $\theta_0$ with probability $p_0$. It is obvious that in order to recognize that $\theta_0$ is the desired phase, we need some priori knowledge about $\theta_0$, for example, $\theta_0 \in (a,b)$ and $\theta_1 > b$ for all $i \neq 0$.
+
+For simplicity, we focus on the case where only the condition 2 is violated, that is, we need to apply the QPE circuit to an initial state $\ket{0^t}\ket{\phi}$ with $t > d$. After applying the QPE circuit, we will obtain 
+\begin{align}
+    \ket{0^t}\ket{\psi_0} &\rightarrow \sum_{k^{'}\in[T]}\left(\frac{1}{T}\sum_{j\in [T] }e^{i2\pi j\left(\theta_0 - \frac{k^{'}}{T}\right)}\right)\ket{k^{'}}\ket{\psi_0} \nonumber \\
+    &= \sum_{k^{'}}\gamma_{0,k^{'}}\ket{k^{'}}\ket{\psi_0},
+\end{align}
+where 
+\begin{equation}
+    \gamma_{0,k^{'}} = \frac{1}{T}\sum_{j\in[T]}e^{i2\pi j\left(\theta_0 - \frac{k^{'}}{T}\right)} = \frac{1}{T}\frac{1 - e^{i2\pi T(\theta_0 - \tilde{\theta}_{k^{'}})}}{1 - e^{i2\pi (\theta_0 - \tilde{\theta}_{k^{'}})}}. \quad \tilde{\theta}_{k^{'}} = \frac{k^{'}}{T}.
+\end{equation}
+If $\theta_0$ has an exact $d$-bit representation, $\theta_0 = \tilde{\theta}_{k_0^{'}}$ for some $k_0^{'}$, then $\gamma_{0,k^{'}} = \delta_{k^{'},k_0^{'}}$
+
+Now we assume that $\theta_0 \neq \tilde{\theta}_{k^{'}}$ for any $k^{'}$. in terms of the phase, we want to find $k_{0}^{'}$ such that 
+\begin{equation}
+    |\theta_0 - \tilde{\theta}_{k_0^{'}}|_1 \leq \epsilon,
+\end{equation}
+where $\epsilon = 2^{-d}$ is the precision parameter. In particular, for  any $k^{'}$ we have 
+\begin{equation}
+    |\theta_0 - \tilde{\theta}_{k^{'}}| \leq 1/2/ 
+\end{equation}
+By using the relation for any $\alpha \in [-\pi, \pi]$,
+\begin{equation}
+    |1 - e^{i\alpha}| = \sqrt{2(1-\cos\alpha)} = 2|\sin(\alpha/2)| \geq \frac{2}{\pi}|\alpha|
+\end{equation}
+therefore, we obtain 
+\begin{equation}
+    |\gamma_{0,k^{'}}| \leq \frac{2}{T\frac{2}{\pi}2\pi|\theta_0 - \tilde{\theta}_{k^{'}}|_1} = \frac{1}{2T|\theta_0 - \tilde{\theta}_{k^{'}}|_1}.
+\end{equation}
+
+Let $k_0^{'}$ be the random measurement outcome. We can calculate the probability of obtaining some $\tilde{\theta}_{k_0^{'}}$ that is at least $\epsilon$ distance away from $\theta_0$ as the following 
+\begin{align}
+    P(|\theta_0 - \tilde{\theta}_{k_0^{'}}|_1 \geq \epsilon) &= \sum_{|\theta_0 - \tilde{\theta}_{k^{'}}|_1 \geq \epsilon} |\gamma_{0,k^{'}}|^2 \nonumber \\
+    &\leq \sum_{|\theta_0 - \tilde{\theta}_{k^{'}}|_1 \geq \epsilon} \frac{1}{4T^2|\theta-\tilde{\theta}_{k^{'}}|_1^2} \nonumber \\
+    &\leq \frac{1}{4T^2}\int_{\epsilon}^{\infty}\frac{1}{x^2}dx + \frac{2}{4T^2\epsilon^2}.
+\end{align}
+Let us set $t - d = \log_2\delta^{-1}$, then we have $T\epsilon = 2^{t-d}\geq \delta^{-1}$. Thus for $0<\delta<1$, the failure probability is 
+\begin{equation}
+    P(|\theta_0 - \tilde{\theta}_{k_0^{'}}|_1 \geq \epsilon) \leq \delta.
+\end{equation} 
+Therefore, if we want to obtain the phase $\theta_0$ to accuracy $\epsilon = 2^{-d}$ with a success probability at least $1-\delta$, we need $d + \log_2\delta^{-1}$ ancilla qubits to store the value of the phase and the simulation time needs to be $T = (\epsilon\delta)^{-1}$.
+
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,QEM}
 
