@@ -771,6 +771,40 @@ Let us set $t - d = \log_2\delta^{-1}$, then we have $T\epsilon = 2^{t-d}\geq \d
 \end{equation} 
 Therefore, if we want to obtain the phase $\theta_0$ to accuracy $\epsilon = 2^{-d}$ with a success probability at least $1-\delta$, we need $d + \log_2\delta^{-1}$ ancilla qubits to store the value of the phase and the simulation time needs to be $T = (\epsilon\delta)^{-1}$.
 
+\section{Applications of quantum phase estimation}
+\subsection{Ground state energy estimation}
+Let $H$ be a Hermitian matrix that describes a system. This matrix is known as the Hamiltonian, and below are two examples of it
+\subsubsection*{Transverse field Ising model}
+The Hamiltonian for the one dimensional TFIM with nearest neighbor interaction of length $n$ is 
+\begin{equation}
+    H = \sum_{i=1}^{n-1}Z_iZ_{i+1} - g\sum_{i=1}^{n}X_i,
+\end{equation}
+which has the dimension of $2^n$.
+
+\subsubsection*{Fermionic system in second quantization}
+For a fermionic system such as electrons, the Hamiltonian can be expressed in terms of the creation and annihilation operators as follows
+\begin{equation}
+    H = \sum_{ij=1}^{n}T_{ij}\hat{a}_i^{\dagger}\hat{a}_j + \sum_{ijkl=1}^{n}V_{ijkl}\hat{a}_i^{\dagger}\hat{a}_j^{\dagger}\hat{a}_k\hat{a}_l.
+\end{equation}
+A transformation called Jordan-Wigner transformation can convert the creation and annihilation operators into the Pauli operators 
+\begin{equation}
+    \hat{a}_i = Z^{\otimes(i-1)}\otimes\frac{1}{2}(X + iY)\otimes I^{\otimes(N-i)}, \quad \hat{a}_i^{\dagger} = Z^{\otimes(i-1)}\otimes\frac{1}{2}(X - iY)\otimes I^{\otimes(N-i)}.
+\end{equation}
+The dimension of the Hamiltonian matrix $\hat{H}$ is also $2^n$. We can define the number operator $\hat{n}_i$
+\begin{equation}
+    \hat{n}_i = \hat{a}_i^{\dagger}\hat{a}_i = \frac{1}{2}(I - Z_i).
+\end{equation}
+This number operator can define the total number of particles in the system, 
+\begin{equation}
+    N_e = \bra{\psi}\sum_{i=1}^{n}\hat{n}_i\ket{\psi}.
+\end{equation}
+The total number of particles is conserved by the Hamiltonian. 
+
+with eigendecomposition 
+\begin{equation}
+    H\ket{\psi_j} = \lambda_j\ket{\psi_j}.
+\end{equation}
+
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,QEM}
 
