@@ -800,10 +800,136 @@ This number operator can define the total number of particles in the system,
 \end{equation}
 The total number of particles is conserved by the Hamiltonian. 
 
-with eigendecomposition 
+The Hamiltoniaian has the eigendecomposition as follows: 
 \begin{equation}
     H\ket{\psi_j} = \lambda_j\ket{\psi_j}.
 \end{equation}
+
+\section{Block encoding}
+To perform the matrix computation in quantum computers, we have to access the information from the matrix, $A \in \mathbb{C}^{N\times N}$ $(N = 2^n)$, which is generally not unitary. Another possible way is to convert the non-unitary matrix into the unitary one, $e^{i\tau A}$. This is useful if $e^{i\tau A}$ can be constructed by using simple circuits. 
+
+A more general way to input the information is by block-encoding. A dense matrtix $A$ without an obvious structure will  be expensive according to the size of the input (for example, exponential in $n$). Therefore, the input is usually assumed to be $s$-sparse, which contains at most $s$ non-zero elements in each row or column. The block-encoding procedure provides a way to locate the nonzero entries of a block-encoded matrix. However, this might also be a difficult task if the number of the non-zero entries in the matrix is the exponential of $n$. 
+
+\subsection{Query model for matrix entries}
+The matrix $A$ is assumed to be an $n$-qubit, square-matrix, with 
+\begin{equation}
+    ||A||_{\text{max}} = \max_{i,j}|A_{ij}| < 1.
+\end{equation}
+If not, then we rescale the matrix $A$ to be $\tilde{A}/\alpha$ for some $\alpha > ||A||_{\text{max}}$. To query the entry of this matrix, we assume an oracle that can do the following operation 
+\begin{equation}
+    O_A\ket{0}\ket{i}\ket{j} = (A_{ij}\ket{0} + \sqrt{1 - |A_{ij}|^2}\ket{1})\ket{i}\ket{j}.
+\end{equation}
+The above oracle works like a controlled rotation, where $\ket{i},\ket{j}$ are the control qubits and $\ket{0}$ is the signal qubit as the target. The controlled rotation will encode $A_{ij}$ as the amplitude of $\ket{0}$.
+
+The classical information in $A$ is typically not stored in the oracle $O_A$, and it is more natural to express the oracle as 
+\begin{equation}
+    \tilde{O}_A\ket{0}\ket{i}\ket{j}= \ket{\tilde{A}_{ij}}\ket{i}\ket{j},
+\end{equation}
+where the fixed-point representation $\tilde{A}_{ij}$ is either computed on the fly by the quantum computer or obtained through an external database. 
+
+\subsection{Block-encoding}
+Assume we can find an $(n+1)$-qubit unitary matrix $U$ such that 
+\begin{equation}
+    U_A = \begin{bmatrix}
+        A & * \\
+        * & *
+    \end{bmatrix}
+\end{equation}
+where $*$ is irrelevant. Then for any $n$-qubit $\ket{b}$ such that 
+\begin{equation}
+    \ket{0,b} = \begin{bmatrix}
+        b \\
+        0
+    \end{bmatrix},
+\end{equation}
+we have 
+\begin{equation}
+    U_A\ket{0,b} = \ket{0}A\ket{b} + \ket{\perp}.
+\end{equation}
+To obtain $A\ket{b}$, we need to measure the qubit 0 and only keep the state if it returns 0. The success probability of this measurement can be computed as follows 
+\begin{equation}
+    p(0) = ||A\ket{b}||^2 = \bra{b}A^\dagger A\ket{b}.
+\end{equation}
+Here, we see that the success probability only depends on $A$ and $\ket{b}$. The other elements in $U_A$ is irrelevant. The matrix $U_A$ can be generalized into an $(n+m)$-qubit matrix . To get $A$, we can compute the following 
+\begin{equation}
+    A = (\bra{0^m}\otimes I_n)U_A(\ket{0^m}\otimes I_n).
+\end{equation}
+
+It is difficult to block encode $A$ exactly. A block encoding unitary $U_A$ typically can only block encode $A$ with some error $\epsilon$. Therefore, given an $n$-qubit matrix $A$, and $\alpha,\epsilon\in\mathbb{R}_{+}$, the $U_A$ is an $(\alpha,m,\epsilon)$-block-encoding of $A$ if 
+\begin{equation}
+    ||A - \alpha(\bra{0^m}\otimes I_n)U_A(\ket{0^m}\otimes I_n)|| \leq \epsilon.
+\end{equation}
+When the block-encoding is exact, $\epsilon = 0$, we call it as $(\alpha,m)$-block-encoding of $A$. The set of all $(\alpha,m,\epsilon)$-block-encoding of $A$ is denoted as $\text{BE}_{\alpha,m}(A,\epsilon)$ and we define $\text{BE}_{\alpha,m}(A) = \text{BE}(A,0)$
+
+Assume we know each entry of  $n$-qubit matrix $A$. GIven an $(m+n)$-qubit unitary $U_A$, we can verify that $U_A\in \text{BE}_{1,m}(A)$ by verifying that 
+\begin{equation}
+    \bra{0^m,i}U_A\ket{0^m,j} = A_{ij}.
+\end{equation}
+We can first evaluate the state $U_A\ket{0^m,j}$ and perform inner product with $\ket{0^m,i}$. If the ancilla qubits are measured to be $0^m$, the system qubits return the normalized state $\sum_iA_{ij}\ket{i}/||\sum_iA_{ij}\ket{i}||$.
+
+\section{Matrix functions of Hermitian matrices}
+Let $A$ an $n$-qubit Hermitian matrix with eigenvalue decomposition 
+\begin{equation}
+    A = V\Lambda V^{\dagger}
+\end{equation}
+where $\Lambda = \text{diag}(\{\lambda_1\})$ is a diagonal matrix and $\lambda_0\leq\cdots\leq\lambda_{N-1}$. Let the scalar function $f$ be well defined on all $\lambda_i$'s. Then the matrix function $f(A)$ can be defined in terms of the eigendecompositon 
+\begin{equation}
+    f(A) = Vf(\Lambda)V^{\dagger}.
+\end{equation}
+
+\subsection{Qubitization of Hermitian matrices with hermitian block encoding}
+We introduce some heuristic idea behind qubitization. For any $-1<\lambda\leq 1$, we can consider a $2\times 2$ matrix 
+\begin{equation}
+    O(\lambda) = \begin{bmatrix}
+        \lambda & -\sqrt{1-\lambda^2} \\
+        \sqrt{1-\lambda^2} & \lambda
+    \end{bmatrix} =
+    \begin{bmatrix}
+        \cos\theta & -\sin\theta \\
+        \sin\theta & \cos\theta
+    \end{bmatrix}.
+\end{equation}
+From this, we have 
+\begin{equation}
+    O^k(\lambda) = \begin{bmatrix}
+        \cos(k\theta) & -\sin(k\theta) \\
+        \sin(k\theta) & \cos(k\theta)
+    \end{bmatrix}.
+\end{equation}
+using the first and second kind of Chebyshev polynomials, 
+\begin{equation}
+    T_k(\lambda) = \cos(k\theta), \quad U_{k-1}(\lambda) = \frac{\sin(k\theta)}{\sin\theta} = \frac{\sin(k\theta)}{\sqrt{1 - \lambda^2}},
+\end{equation}
+we have 
+\begin{equation}
+    O^k(\lambda) = \begin{bmatrix}
+        T_k(\lambda) & -\sqrt{1-\lambda^2}U_{k-1}(\lambda) \\
+        \sqrt{1 - \lambda^2}U_{k-1}(\lambda) & T_k(\lambda)
+    \end{bmatrix}.
+\end{equation}
+
+In the simplest scenario, we assume that $U_A = \text{HBE}_{1,m}(A)$, where $A$ has spectral decomposition as follows 
+\begin{equation}
+    A = \sum_i\lambda_i\ket{v_i}\bra{v_i}.
+\end{equation}
+For each eigenstate $\ket{v_i}$, we have 
+\begin{equation}
+    U_A\ket{0^m}\ket{v_i} = \ket{0^m}A\ket{v_i} + \ket{\tilde{\perp}},
+\end{equation}
+where 
+\begin{equation}
+    \Pi\ket{\tilde{\perp}} = (\ket{0^m}\bra{0^m}\otimes I_n)\ket{\tilde{\perp}} = 0.
+\end{equation}
+Also, we can write 
+\begin{equation}
+    \ket{\tilde{\perp_i} } = \sqrt{1 - \lambda^2_i}\ket{\perp_i},
+\end{equation}
+where $\ket{\perp_i}$ is a normalized state. 
+
+If $\lambda_i = \pm 1$, then $\mathcal{H} = \text{span}\{\ket{0^m}\ket{v_i}\}$ is already an invariant subspace of $U_A$. By using the fact that $U_AU^{\dagger}_A = I$, we have 
+\begin{equation}
+    U_A\ket{\perp_i} = \sqrt{1 - \lambda_i^2}\ket{0^m}\ket{v_i} - \lambda_i\ket{\perp_i}.
+\end{equation} 
 
 \bibliographystyle{IEEEtran}
 \bibliography{IEEEabrv,QEM}
